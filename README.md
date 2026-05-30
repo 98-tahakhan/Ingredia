@@ -54,15 +54,15 @@ Ingredia bridges this gap. Point your phone camera at any packaged food barcode,
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/home.png" alt="Home Screen" width="220" />
-  <img src="docs/screenshots/scanner.png" alt="Barcode Scanner" width="220" />
-  <img src="docs/screenshots/results.png" alt="Product Results" width="220" />
+  <img src="docs/screenshots/home.jpeg" alt="Home Screen" width="220" />
+  <img src="docs/screenshots/scanner.jpeg" alt="Barcode Scanner" width="220" />
+  <img src="docs/screenshots/result.jpeg" alt="Product Results" width="220" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/ocr-results.png" alt="OCR Analysis" width="220" />
-  <img src="docs/screenshots/ai-section.png" alt="AI & OCR Ingredients" width="220" />
-  <img src="docs/screenshots/history.png" alt="Scan History" width="220" />
+  <img src="docs/screenshots/ocr-result.jpeg" alt="OCR Analysis" width="220" />
+  <img src="docs/screenshots/ai-section.jpeg" alt="AI & OCR Ingredients" width="220" />
+  <img src="docs/screenshots/history.jpeg" alt="Scan History" width="220" />
 </p>
 
 ---
