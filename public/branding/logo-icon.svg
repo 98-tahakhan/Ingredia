@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Barcode bars -->
+  <g id="barcode">
+    <rect x="25" y="60" width="6" height="40" rx="1.5" fill="#15803D"/>
+    <rect x="35" y="52" width="6" height="48" rx="1.5" fill="#15803D"/>
+    <rect x="45" y="44" width="6" height="56" rx="1.5" fill="#16A34A"/>
+    <rect x="55" y="36" width="6" height="64" rx="1.5" fill="#22C55E"/>
+    <rect x="65" y="42" width="6" height="58" rx="1.5" fill="#22C55E"/>
+    <rect x="75" y="52" width="6" height="48" rx="1.5" fill="#16A34A"/>
+    <rect x="85" y="60" width="6" height="40" rx="1.5" fill="#15803D"/>
+  </g>
+  <!-- AI circuit nodes -->
+  <g id="ai-nodes">
+    <line x1="38" y1="48" x2="38" y2="32" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="38" cy="28" r="4" fill="#22C55E"/>
+    <line x1="55" y1="32" x2="55" y2="18" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="55" cy="14" r="4" fill="#22C55E"/>
+    <line x1="55" y1="14" x2="65" y2="8" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="68" cy="6" r="3" fill="#86EFAC"/>
+    <line x1="38" y1="28" x2="28" y2="22" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="25" cy="20" r="3" fill="#86EFAC"/>
+  </g>
+  <!-- Leaf -->
+  <path d="M68 38 C78 18, 100 10, 108 7 C105 18, 95 32, 78 44 C90 28, 100 18, 105 12 C95 18, 82 30, 73 42 Z" fill="url(#leafGrad)"/>
+  <path d="M73 40 C83 28, 95 18, 104 11" stroke="#15803D" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="leafGrad" x1="68" y1="44" x2="108" y2="7" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#86EFAC"/>
+    </linearGradient>
+  </defs>
+</svg>

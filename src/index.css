@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Ingredia — premium wellness green */
+    --background: 100 30% 97%;
+    --foreground: 155 35% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 155 35% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 155 35% 12%;
+
+    --primary: 155 55% 28%;
+    --primary-foreground: 100 30% 97%;
+    --primary-glow: 150 60% 45%;
+
+    --secondary: 120 25% 92%;
+    --secondary-foreground: 155 45% 18%;
+
+    --muted: 120 20% 94%;
+    --muted-foreground: 155 12% 42%;
+
+    --accent: 88 50% 70%;
+    --accent-foreground: 155 45% 15%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 60% 42%;
+    --warning: 38 92% 55%;
+    --danger: 0 78% 58%;
+
+    --border: 140 20% 88%;
+    --input: 140 20% 90%;
+    --ring: 155 55% 35%;
+
+    --radius: 1.25rem;
+
+    --gradient-hero: linear-gradient(135deg, hsl(155 55% 28%) 0%, hsl(150 60% 45%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(120 35% 95%) 0%, hsl(100 30% 97%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.9), hsl(120 35% 96% / 0.7));
+    --gradient-score: conic-gradient(from 0deg, hsl(0 78% 58%), hsl(38 92% 55%), hsl(145 60% 42%), hsl(150 60% 45%));
+
+    --shadow-soft: 0 8px 32px -8px hsl(155 40% 20% / 0.12);
+    --shadow-glow: 0 20px 60px -15px hsl(150 60% 45% / 0.35);
+    --shadow-card: 0 4px 20px -4px hsl(155 30% 15% / 0.08);
+
+    --glass-bg: hsl(0 0% 100% / 0.65);
+    --glass-border: hsl(0 0% 100% / 0.4);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 155 30% 7%;
+    --foreground: 100 20% 95%;
+    --card: 155 25% 10%;
+    --card-foreground: 100 20% 95%;
+    --popover: 155 25% 10%;
+    --popover-foreground: 100 20% 95%;
+    --primary: 150 60% 50%;
+    --primary-foreground: 155 35% 8%;
+    --primary-glow: 145 70% 60%;
+    --secondary: 155 20% 15%;
+    --secondary-foreground: 100 20% 95%;
+    --muted: 155 20% 14%;
+    --muted-foreground: 140 10% 65%;
+    --accent: 88 40% 35%;
+    --accent-foreground: 100 20% 95%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 60% 50%;
+    --warning: 38 92% 60%;
+    --danger: 0 75% 60%;
+    --border: 155 20% 18%;
+    --input: 155 20% 18%;
+    --ring: 150 60% 50%;
+    --glass-bg: hsl(155 25% 12% / 0.6);
+    --glass-border: hsl(150 40% 30% / 0.4);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv11";
+    background-image: var(--gradient-soft);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+  }
+  .gradient-hero { background: var(--gradient-hero); }
+  .gradient-card { background: var(--gradient-card); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .text-balance { text-wrap: balance; }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Simplified barcode + leaf for favicon -->
+  <rect x="4" y="14" width="3" height="14" rx="1" fill="#15803D"/>
+  <rect x="9" y="11" width="3" height="17" rx="1" fill="#16A34A"/>
+  <rect x="14" y="8" width="3" height="20" rx="1" fill="#22C55E"/>
+  <rect x="19" y="11" width="3" height="17" rx="1" fill="#16A34A"/>
+  <rect x="24" y="14" width="3" height="14" rx="1" fill="#15803D"/>
+  <!-- Leaf -->
+  <path d="M18 10 C22 4, 28 2, 30 1 C29 5, 26 9, 21 12 C25 7, 28 4, 29 2 C26 5, 22 8, 19 11 Z" fill="url(#fGrad)"/>
+  <defs>
+    <linearGradient id="fGrad" x1="18" y1="12" x2="30" y2="1" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#86EFAC"/>
+    </linearGradient>
+  </defs>
+</svg>

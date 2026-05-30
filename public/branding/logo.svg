@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" fill="none">
+  <!-- Barcode bars transitioning upward -->
+  <g id="barcode">
+    <rect x="130" y="140" width="8" height="60" rx="2" fill="#15803D"/>
+    <rect x="144" y="130" width="8" height="70" rx="2" fill="#15803D"/>
+    <rect x="158" y="120" width="8" height="80" rx="2" fill="#16A34A"/>
+    <rect x="172" y="110" width="8" height="90" rx="2" fill="#16A34A"/>
+    <rect x="186" y="100" width="8" height="100" rx="2" fill="#22C55E"/>
+    <rect x="200" y="110" width="8" height="90" rx="2" fill="#22C55E"/>
+    <rect x="214" y="125" width="8" height="75" rx="2" fill="#16A34A"/>
+    <rect x="228" y="135" width="8" height="65" rx="2" fill="#16A34A"/>
+  </g>
+  <!-- AI circuit nodes -->
+  <g id="ai-nodes">
+    <line x1="152" y1="120" x2="152" y2="90" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="152" cy="85" r="5" fill="#22C55E"/>
+    <line x1="176" y1="105" x2="176" y2="72" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="176" cy="67" r="5" fill="#22C55E"/>
+    <line x1="176" y1="67" x2="190" y2="55" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="193" cy="52" r="4" fill="#86EFAC"/>
+    <line x1="152" y1="85" x2="140" y2="75" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="137" cy="72" r="4" fill="#86EFAC"/>
+  </g>
+  <!-- Leaf -->
+  <g id="leaf">
+    <path d="M210 95 C225 60, 270 45, 280 40 C275 55, 260 80, 235 100 C250 75, 265 60, 275 48 C260 58, 240 75, 225 95 Z" fill="url(#leafGradient)"/>
+    <path d="M220 93 C235 75, 255 60, 270 48" stroke="#15803D" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="leafGradient" x1="210" y1="100" x2="280" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#86EFAC"/>
+    </linearGradient>
+  </defs>
+  <!-- INGREDIA text -->
+  <text x="200" y="240" text-anchor="middle" font-family="'Inter', 'Segoe UI', sans-serif" font-size="32" font-weight="700" letter-spacing="8" fill="#15803D">INGREDIA</text>
+  <!-- Tagline -->
+  <text x="200" y="272" text-anchor="middle" font-family="'Inter', 'Segoe UI', sans-serif" font-size="14" font-weight="400" font-style="italic" fill="#22C55E">See Beyond the Label.</text>
+</svg>
