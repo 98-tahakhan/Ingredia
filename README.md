@@ -1,22 +1,22 @@
-# Ingredia
-
 <p align="center">
   <img src="public/branding/logo.svg" alt="Ingredia Logo" width="300" />
 </p>
+
+<h1 align="center">Ingredia</h1>
 
 <p align="center">
   <strong>See Beyond the Label.</strong>
 </p>
 
 <p align="center">
-![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-Auth%20%2B%20DB-3FCF8E?logo=supabase&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini%20AI-2.5-4285F4?logo=google&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-blue)
+  <img src="https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Supabase-Auth%20%2B%20DB-3FCF8E?logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Gemini%20AI-2.5-4285F4?logo=google&logoColor=white" alt="Gemini" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/License-MIT-blue" alt="License" />
 </p>
 
 A mobile-first AI-powered nutrition analysis platform that helps Indian consumers understand what's inside packaged food products through barcode scanning, OCR-based ingredient extraction, and intelligent health scoring.
