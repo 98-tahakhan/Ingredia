@@ -1,113 +1,129 @@
 """
-Production-quality OCR pipeline for ingredient extraction from food labels.
+Production OCR pipeline for ingredient extraction from food labels.
 
 Pipeline:
-1. Image preprocessing (grayscale, contrast, sharpen, threshold)
-2. Tesseract OCR with tuned config
-3. Text cleanup (remove URLs, social media, barcodes, garbage)
-4. Ingredient section extraction (find "Ingredients:" header)
-5. Structured parsing into ingredient array
-6. Confidence check — reject low-quality results
-7. Gemini Vision fallback for difficult labels
+1. Send image to OCR.Space cloud API (no local Tesseract needed)
+2. Text cleanup (remove URLs, social media, barcodes, garbage)
+3. Ingredient section extraction (find "Ingredients:" header)
+4. Structured parsing into ingredient array
+5. Confidence check — reject low-quality results
+6. Gemini Vision fallback for difficult labels
 
 Does NOT hallucinate ingredients. Returns error if text is unreadable.
 """
 
 import io
-import os
 import re
 import base64
-from PIL import Image, ImageFilter, ImageEnhance, ImageOps
-import pytesseract
+import httpx
+from PIL import Image
 import google.generativeai as genai
-from .config import GEMINI_API_KEY, TESSERACT_CMD
+from .config import GEMINI_API_KEY, OCR_SPACE_API_KEY
 
 # ─── Configuration ────────────────────────────────────────────────────────────
 
-if os.path.exists(TESSERACT_CMD):
-    pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
+OCR_SPACE_URL = "https://api.ocr.space/parse/image"
 
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
 
-# ─── 1. Image Preprocessing ──────────────────────────────────────────────────
+# ─── 1. OCR.Space Cloud OCR ──────────────────────────────────────────────────
 
-def _preprocess_image(image: Image.Image) -> Image.Image:
+async def _run_ocr_space(image_bytes: bytes) -> tuple[str, float]:
     """
-    Aggressive preprocessing for food label OCR:
-    - Grayscale
-    - Auto-contrast
-    - Sharpen
-    - Adaptive threshold (binarization)
-    - Upscale small images
+    Send image to OCR.Space API for text extraction.
+    Returns (extracted_text, confidence_score).
+
+    Handles:
+    - API failures (network, timeout)
+    - Rate limiting (HTTP 429)
+    - Unreadable images (empty result)
     """
-    # Convert to grayscale
-    img = image.convert("L")
+    if not OCR_SPACE_API_KEY:
+        return "", 0.0
 
-    # Auto-contrast (stretches histogram)
-    img = ImageOps.autocontrast(img, cutoff=2)
+    # Encode image as base64 data URI for OCR.Space
+    img_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    # Detect format from bytes header
+    if image_bytes[:3] == b"\xff\xd8\xff":
+        mime = "image/jpeg"
+    elif image_bytes[:8] == b"\x89PNG\r\n\x1a\n":
+        mime = "image/png"
+    else:
+        mime = "image/jpeg"  # Default to JPEG
 
-    # Increase contrast further
-    enhancer = ImageEnhance.Contrast(img)
-    img = enhancer.enhance(1.8)
+    payload = {
+        "apikey": OCR_SPACE_API_KEY,
+        "base64Image": f"data:{mime};base64,{img_base64}",
+        "language": "eng",
+        "isOverlayRequired": "false",
+        "detectOrientation": "true",
+        "scale": "true",
+        "OCREngine": "2",  # Engine 2 is better for dense text / labels
+    }
 
-    # Sharpen
-    img = img.filter(ImageFilter.SHARPEN)
-    img = img.filter(ImageFilter.SHARPEN)  # Double sharpen for small text
-
-    # Upscale small images (ingredient text is often tiny)
-    w, h = img.size
-    if w < 1000:
-        ratio = 1000 / w
-        img = img.resize((int(w * ratio), int(h * ratio)), Image.LANCZOS)
-
-    # Binarization: convert to pure black/white using threshold
-    # This removes background noise and makes text crisp
-    threshold = 140
-    img = img.point(lambda p: 255 if p > threshold else 0, mode="1")
-    img = img.convert("L")  # Back to grayscale for Tesseract
-
-    return img
-
-
-# ─── 2. Tesseract OCR ────────────────────────────────────────────────────────
-
-def _run_tesseract(image: Image.Image) -> tuple[str, float]:
-    """
-    Run Tesseract with config tuned for ingredient paragraphs.
-    Returns (text, average_confidence).
-    """
-    # PSM 6: Assume a single uniform block of text (good for ingredient paragraphs)
-    # PSM 11: Sparse text — try if PSM 6 fails
-    # OEM 3: Default (LSTM + legacy)
-    config_primary = r"--oem 3 --psm 6"
-
-    # Get text with confidence data
     try:
-        data = pytesseract.image_to_data(image, config=config_primary, lang="eng", output_type=pytesseract.Output.DICT)
-    except Exception:
-        # Fallback to simple string extraction
-        text = pytesseract.image_to_string(image, config=config_primary, lang="eng")
-        return text.strip(), 50.0
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(OCR_SPACE_URL, data=payload)
 
-    # Build text and calculate average confidence
-    words = []
-    confidences = []
-    for i, word in enumerate(data["text"]):
-        word = word.strip()
-        conf = int(data["conf"][i])
-        if word and conf > 0:
-            words.append(word)
-            confidences.append(conf)
+        # Handle rate limiting
+        if response.status_code == 429:
+            return "", 0.0
 
-    text = " ".join(words)
-    avg_conf = sum(confidences) / len(confidences) if confidences else 0.0
+        if response.status_code != 200:
+            return "", 0.0
 
-    return text, avg_conf
+        result = response.json()
+
+        # Check for API-level errors
+        if result.get("IsErroredOnProcessing", False):
+            return "", 0.0
+
+        if result.get("OCRExitCode", 0) != 1:
+            # Exit code 1 = success, others indicate issues
+            return "", 0.0
+
+        # Extract text from parsed results
+        parsed_results = result.get("ParsedResults", [])
+        if not parsed_results:
+            return "", 0.0
+
+        text_parts = []
+        total_confidence = 0.0
+        count = 0
+
+        for parsed in parsed_results:
+            text = parsed.get("ParsedText", "").strip()
+            if text:
+                text_parts.append(text)
+            # OCR.Space doesn't give per-word confidence in basic mode,
+            # but we can use the exit code and text length as proxy
+            if text:
+                count += 1
+                # Estimate confidence based on text quality indicators
+                total_confidence += 70.0  # Base confidence for successful parse
+
+        full_text = "\n".join(text_parts)
+
+        # Adjust confidence based on text characteristics
+        avg_confidence = (total_confidence / count) if count > 0 else 0.0
+        if len(full_text) > 50:
+            avg_confidence += 10.0  # Bonus for substantial text
+        if full_text.count(",") >= 3:
+            avg_confidence += 10.0  # Bonus for comma-separated content (likely ingredients)
+
+        return full_text, min(avg_confidence, 95.0)
+
+    except httpx.TimeoutException:
+        return "", 0.0
+    except httpx.RequestError:
+        return "", 0.0
+    except (ValueError, KeyError):
+        return "", 0.0
 
 
-# ─── 3. Text Cleanup ─────────────────────────────────────────────────────────
+# ─── 2. Text Cleanup ─────────────────────────────────────────────────────────
 
 # Patterns to remove (garbage text from packaging)
 GARBAGE_PATTERNS = [
@@ -174,7 +190,7 @@ def _clean_ocr_text(raw: str) -> str:
     return " ".join(cleaned_lines)
 
 
-# ─── 4. Ingredient Section Extraction ────────────────────────────────────────
+# ─── 3. Ingredient Section Extraction ────────────────────────────────────────
 
 # Headers that indicate the start of ingredient list
 INGREDIENT_HEADERS = [
@@ -260,7 +276,7 @@ def _looks_like_ingredient_list(text: str) -> bool:
     return bool(food_indicators.search(text))
 
 
-# ─── 5. Ingredient Parsing ───────────────────────────────────────────────────
+# ─── 4. Ingredient Parsing ───────────────────────────────────────────────────
 
 def _parse_ingredients(text: str) -> list[str]:
     """
@@ -312,7 +328,7 @@ def _parse_ingredients(text: str) -> list[str]:
     return ingredients
 
 
-# ─── 6. Confidence Check ─────────────────────────────────────────────────────
+# ─── 5. Confidence Check ─────────────────────────────────────────────────────
 
 def _assess_quality(ingredients: list[str], confidence: float) -> bool:
     """
@@ -342,7 +358,7 @@ def _assess_quality(ingredients: list[str], confidence: float) -> bool:
     return True
 
 
-# ─── 7. Gemini Vision Fallback ────────────────────────────────────────────────
+# ─── 6. Gemini Vision Fallback ────────────────────────────────────────────────
 
 def _gemini_extract_ingredients(image_bytes: bytes) -> str:
     """
@@ -399,43 +415,39 @@ Water, Sugar, Carbonated Water, Citric Acid, Sodium Benzoate, Artificial Colour 
 
 # ─── Main Pipeline ────────────────────────────────────────────────────────────
 
-def extract_ingredients_from_image(image_bytes: bytes) -> str:
+async def extract_ingredients_from_image(image_bytes: bytes) -> str:
     """
     Production OCR pipeline for ingredient extraction.
 
     Pipeline:
-    1. Preprocess image
-    2. Run Tesseract OCR
-    3. Clean garbage text
-    4. Extract ingredient section
-    5. Parse into structured list
-    6. Check quality/confidence
-    7. Fall back to Gemini if needed
-    8. Return clean ingredient string or empty string
+    1. Send image to OCR.Space cloud API
+    2. Clean garbage text
+    3. Extract ingredient section
+    4. Parse into structured list
+    5. Check quality/confidence
+    6. Fall back to Gemini if needed
+    7. Return clean ingredient string or empty string
 
     Returns: comma-separated ingredient string, or empty string if unreadable.
     """
-    image = Image.open(io.BytesIO(image_bytes))
+    # ── Step 1: Cloud OCR via OCR.Space ──
+    raw_text, confidence = await _run_ocr_space(image_bytes)
 
-    # ── Step 1-2: Preprocess and OCR ──
-    processed = _preprocess_image(image)
-    raw_text, confidence = _run_tesseract(processed)
+    # ── Step 2: Clean garbage ──
+    cleaned_text = _clean_ocr_text(raw_text) if raw_text else ""
 
-    # ── Step 3: Clean garbage ──
-    cleaned_text = _clean_ocr_text(raw_text)
+    # ── Step 3: Extract ingredient section ──
+    ingredient_text = _extract_ingredient_section(cleaned_text) if cleaned_text else ""
 
-    # ── Step 4: Extract ingredient section ──
-    ingredient_text = _extract_ingredient_section(cleaned_text)
-
-    # ── Step 5: Parse ingredients ──
+    # ── Step 4: Parse ingredients ──
     ingredients = _parse_ingredients(ingredient_text)
 
-    # ── Step 6: Quality check ──
+    # ── Step 5: Quality check ──
     if _assess_quality(ingredients, confidence):
         # Good quality — return the parsed ingredients as comma-separated string
         return ", ".join(ingredients)
 
-    # ── Step 7: Tesseract failed — try Gemini Vision ──
+    # ── Step 6: OCR.Space failed or low quality — try Gemini Vision ──
     gemini_result = _gemini_extract_ingredients(image_bytes)
     if gemini_result:
         # Validate Gemini result too
@@ -446,7 +458,7 @@ def extract_ingredients_from_image(image_bytes: bytes) -> str:
         if gemini_result.count(",") >= 2:
             return gemini_result
 
-    # ── Step 8: If we got SOME ingredients from Tesseract, return them ──
+    # ── Step 7: If we got SOME ingredients from OCR.Space, return them ──
     if len(ingredients) >= 2:
         return ", ".join(ingredients)
 

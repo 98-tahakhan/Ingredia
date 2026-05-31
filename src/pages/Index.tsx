@@ -121,9 +121,9 @@ const Index = () => {
                 }
               };
               return (
-                <button key={s.id} onClick={handleClick} className="w-full flex items-center gap-3 gradient-card rounded-2xl p-3 shadow-card text-left">
+                <button key={s.id} onClick={handleClick} className="w-full flex items-center gap-3 gradient-card rounded-2xl p-3 shadow-card text-left tap-highlight">
                   <div className="h-14 w-14 rounded-xl overflow-hidden bg-muted shrink-0">
-                    {s.image_url ? <img src={s.image_url} alt={s.product_name} className="h-full w-full object-cover" /> : (
+                    {s.image_url ? <img src={s.image_url} alt={s.product_name} loading="lazy" className="h-full w-full object-cover" /> : (
                       <div className="h-full w-full bg-primary/10 grid place-items-center text-primary text-xs font-bold">
                         {isOcr ? "OCR" : s.product_name.charAt(0)}
                       </div>
@@ -145,7 +145,7 @@ const Index = () => {
       {!showSearch && (
         <>
           <section className="relative overflow-hidden rounded-3xl shadow-glow">
-            <img src={heroImg} alt="Healthy foods" width={1280} height={896} className="h-44 w-full object-cover" />
+            <img src={heroImg} alt="Healthy foods" width={1280} height={896} loading="lazy" className="h-44 w-full object-cover" style={{ contentVisibility: "auto" }} />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/80 via-primary/30 to-transparent" />
             <div className="absolute inset-0 flex flex-col justify-end p-5 text-primary-foreground">
               <div className="flex items-center gap-1.5 text-xs font-medium opacity-90">
@@ -159,7 +159,7 @@ const Index = () => {
             <h2 className="text-lg font-semibold text-foreground">Categories</h2>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5">
               {categories.map((c) => (
-                <button key={c.id} className="flex flex-col items-center gap-2 shrink-0 group">
+                <button key={c.id} className="flex flex-col items-center gap-2 shrink-0 group tap-highlight">
                   <div className="h-20 w-20 rounded-2xl overflow-hidden gradient-card shadow-card group-hover:shadow-glow transition-shadow">
                     <img src={c.image} alt={c.label} loading="lazy" className="h-full w-full object-cover" />
                   </div>
@@ -186,9 +186,9 @@ const Index = () => {
                     }
                   };
                   return (
-                    <button key={s.id} onClick={handleClick} className="w-full flex items-center gap-3 gradient-card rounded-2xl p-3 shadow-card text-left">
+                    <button key={s.id} onClick={handleClick} className="w-full flex items-center gap-3 gradient-card rounded-2xl p-3 shadow-card text-left tap-highlight">
                       <div className="h-14 w-14 rounded-xl overflow-hidden bg-muted shrink-0">
-                        {s.image_url ? <img src={s.image_url} alt={s.product_name} className="h-full w-full object-cover" /> : (
+                        {s.image_url ? <img src={s.image_url} alt={s.product_name} loading="lazy" className="h-full w-full object-cover" /> : (
                           <div className="h-full w-full bg-primary/10 grid place-items-center text-primary text-xs font-bold">
                             {isOcr ? "OCR" : s.product_name.charAt(0)}
                           </div>

@@ -84,20 +84,20 @@ async def scan_barcode(req: BarcodeRequest):
 @app.post("/api/scan/ingredients", response_model=OCRResponse)
 async def scan_ingredients(file: UploadFile = File(...)):
     """
-    Extract ingredients from an uploaded image using OCR, then analyze.
-    Uses Tesseract (local) with Gemini Vision fallback (for Indian labels).
+    Extract ingredients from an uploaded image using OCR.Space cloud API, then analyze.
+    Falls back to Gemini Vision for difficult Indian labels.
     """
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image (JPEG, PNG, etc.)")
 
     image_bytes = await file.read()
-    if len(image_bytes) > 10 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="Image too large (max 10MB)")
+    if len(image_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Image too large (max 5MB). Please compress before uploading.")
     if len(image_bytes) < 1000:
         raise HTTPException(status_code=400, detail="Image too small or empty")
 
     try:
-        ingredient_text = extract_ingredients_from_image(image_bytes)
+        ingredient_text = await extract_ingredients_from_image(image_bytes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"OCR processing failed: {str(e)}")
 

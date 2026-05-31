@@ -24,8 +24,5 @@ OPENFOODFACTS_BASE_URL: str = os.getenv(
     "https://world.openfoodfacts.org/api/v2/product"
 )
 
-# Tesseract OCR path (Windows default)
-TESSERACT_CMD: str = os.getenv(
-    "TESSERACT_CMD",
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+# OCR.Space API key (cloud OCR — no local Tesseract needed)
+OCR_SPACE_API_KEY: str = os.getenv("OCR_SPACE_API_KEY", "")

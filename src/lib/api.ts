@@ -72,15 +72,20 @@ export async function scanBarcode(barcode: string): Promise<ScanResult> {
 }
 
 /**
- * OCR scan — upload ingredient label image to backend.
+ * OCR scan — compress image on frontend, then upload to backend.
+ * Frontend compression reduces upload size for mobile-first performance.
  */
 export async function scanIngredientImage(file: File): Promise<{
     success: boolean;
     extracted_text: string;
     analysis: HealthAnalysis | null;
 }> {
+    // Compress image before upload (max 1280px width, JPEG 0.7 quality, <1MB)
+    const { compressImageForOCR } = await import("./imageCompression");
+    const compressedFile = await compressImageForOCR(file);
+
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", compressedFile);
 
     const res = await fetch(`${API_BASE}/api/scan/ingredients`, {
         method: "POST",

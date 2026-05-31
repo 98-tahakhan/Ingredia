@@ -130,13 +130,94 @@ All colors MUST be HSL.
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--glass-border);
   }
-  .gradient-hero { background: var(--gradient-hero); }
-  .gradient-card { background: var(--gradient-card); }
-  .shadow-soft { box-shadow: var(--shadow-soft); }
-  .shadow-glow { box-shadow: var(--shadow-glow); }
-  .shadow-card { box-shadow: var(--shadow-card); }
-  .text-balance { text-wrap: balance; }
 
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* ─── Page Transitions ─── */
+  .page-transition {
+    animation: page-enter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  /* ─── Tap Feedback ─── */
+  .tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+
+  .tap-highlight:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  /* ─── Lazy Image Loading ─── */
+  .img-lazy {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .img-lazy.loaded {
+    opacity: 1;
+  }
+}
+
+/* ─── Page Enter Animation ─── */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Smooth touch scrolling ─── */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Prevent overscroll bounce on iOS ─── */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* ─── Improve touch responsiveness ─── */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
 }
