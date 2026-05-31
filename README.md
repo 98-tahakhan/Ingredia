@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ingredia-taupe.vercel.app"><strong>🚀 Live Demo</strong></a>
+  <a href="https://ingredia-taupe.vercel.app"><strong>Live Demo</strong></a>
 </p>
 
 A mobile-first AI-powered nutrition analysis platform that helps Indian consumers understand what's inside packaged food products through barcode scanning, OCR-based ingredient extraction, and intelligent health scoring.
